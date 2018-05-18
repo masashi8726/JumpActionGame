@@ -43,6 +43,7 @@ public class GameScreen extends ScreenAdapter{
     Random mRandom;
     List<Step> mSteps;
     List<Star> mStars;
+    List<Enemy> mEnemy;
     Ufo mUfo;
     Player mPlayer;
 
@@ -73,6 +74,7 @@ public class GameScreen extends ScreenAdapter{
         mRandom = new Random();
         mSteps = new ArrayList<Step>();
         mStars = new ArrayList<Star>();
+        mEnemy = new ArrayList<Enemy>();
         mGameState = GAME_STATE_READY;
         mTouchPoint = new Vector3();
         mFont = new BitmapFont(Gdx.files.internal("font.fnt"), Gdx.files.internal("font.png"), false);
@@ -112,6 +114,10 @@ public class GameScreen extends ScreenAdapter{
             mStars.get(i).draw(mGame.batch);
         }
 
+        for (int i = 0; i < mEnemy.size(); i++) {
+            mEnemy.get(i).draw(mGame.batch);
+        }
+
         mUfo.draw(mGame.batch);
 
         mPlayer.draw(mGame.batch);
@@ -136,6 +142,7 @@ public class GameScreen extends ScreenAdapter{
 
         Texture stepTexture = new Texture("step.png");
         Texture starTexture = new Texture("star.png");
+        Texture enemyTexture = new Texture("enemy.png");
         Texture playerTexture = new Texture("uma.png");
         Texture ufoTexture = new Texture("ufo.png");
 
@@ -156,12 +163,18 @@ public class GameScreen extends ScreenAdapter{
                 mStars.add(star);
             }
 
+            if (mRandom.nextFloat() > 0.6f) {
+                Enemy enemy = new Enemy(enemyTexture, 0, 0, 90,90);
+                enemy.setPosition(enemy.getX() + mRandom.nextFloat(), enemy.getY() + Enemy.ENEMY_HEIGHT + mRandom.nextFloat() *3);
+                mEnemy.add(enemy);
+            }
+
             y += (maxJumpHeight - 0.5f);
             y -= mRandom.nextFloat() * (maxJumpHeight / 3);
         }
 
-        mPlayer = new Player(playerTexture, 0, 0, 120, 74);
-        mPlayer.setPosition(WORLD_WIDTH / 2 - Ufo.UFO_WIDTH / 2, y);
+        mPlayer = new Player(playerTexture, 0, 0, 72, 72);
+        mPlayer.setPosition(WORLD_WIDTH / 2 - mPlayer.getWidth() / 2, Step.STEP_HEIGHT);
 
         mUfo = new Ufo(ufoTexture, 0, 0, 120, 74);
         mUfo.setPosition(WORLD_WIDTH / 2 - Ufo.UFO_WIDTH / 2, y);
@@ -201,7 +214,7 @@ public class GameScreen extends ScreenAdapter{
             }
         }
 
-        for (int i = 0; i < mStars.size(); i++) {
+        for (int i = 0; i < mSteps.size(); i++) {
             mSteps.get(i).update(delta);
         }
 
@@ -231,8 +244,22 @@ public class GameScreen extends ScreenAdapter{
 
     private void checkCollisipn() {
         if(mPlayer.getBoundingRectangle().overlaps(mUfo.getBoundingRectangle())) {
+            Gdx.app.log("JampActionGame", "CLEAR");
             mGameState = GAME_STATE_GAMEOVER;
             return;
+        }
+
+        for (int i = 0; i < mEnemy.size(); i++) {
+            Enemy enemy = mEnemy.get(i);
+
+            if (enemy.mState == Enemy.ENEMY_NONE) {
+                continue;
+            }
+
+            if (mPlayer.getBoundingRectangle().overlaps(enemy.getBoundingRectangle())){
+                mGameState = GAME_STATE_GAMEOVER;
+                return;
+            }
         }
 
         for (int i = 0; i < mStars.size(); i++) {
