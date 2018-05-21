@@ -3,6 +3,7 @@ package jp.techacademy.masashi.muto.jumpactiongame;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.Texture;
@@ -164,8 +165,8 @@ public class GameScreen extends ScreenAdapter{
             }
 
             if (mRandom.nextFloat() > 0.6f) {
-                Enemy enemy = new Enemy(enemyTexture, 0, 0, 90,90);
-                enemy.setPosition(enemy.getX() + mRandom.nextFloat(), enemy.getY() + Enemy.ENEMY_HEIGHT + mRandom.nextFloat() *3);
+                Enemy enemy = new Enemy(enemyTexture, 0, 0, 300,300);
+                enemy.setPosition(step.getX() + mRandom.nextFloat(), step.getY() + Enemy.ENEMY_HEIGHT + mRandom.nextFloat() *3);
                 mEnemy.add(enemy);
             }
 
@@ -243,9 +244,12 @@ public class GameScreen extends ScreenAdapter{
     }
 
     private void checkCollisipn() {
+        Sound sound = Gdx.audio.newSound(Gdx.files.internal("effect.mp3"));
+
         if(mPlayer.getBoundingRectangle().overlaps(mUfo.getBoundingRectangle())) {
             Gdx.app.log("JampActionGame", "CLEAR");
             mGameState = GAME_STATE_GAMEOVER;
+
             return;
         }
 
@@ -257,6 +261,8 @@ public class GameScreen extends ScreenAdapter{
             }
 
             if (mPlayer.getBoundingRectangle().overlaps(enemy.getBoundingRectangle())){
+                sound.play(20.0f);
+                sound.dispose();
                 mGameState = GAME_STATE_GAMEOVER;
                 return;
             }

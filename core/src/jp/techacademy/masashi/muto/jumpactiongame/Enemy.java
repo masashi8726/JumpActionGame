@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
 public class Enemy extends Sprite {
-    public static final float ENEMY_WIDTH = 1.5f;
+    public static final float ENEMY_WIDTH = 0.8f;
     public static final float ENEMY_HEIGHT = 0.8f;
 
     public static final int ENEMY_EXIST = 0;
