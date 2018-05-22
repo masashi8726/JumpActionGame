@@ -56,6 +56,8 @@ public class GameScreen extends ScreenAdapter{
     int mHighScore;
     Preferences mPrefs;
 
+    Sound sound = Gdx.audio.newSound(Gdx.files.internal("effect.mp3"));
+
     public GameScreen(JumpActionGame game) {
         mGame = game;
 
@@ -244,7 +246,6 @@ public class GameScreen extends ScreenAdapter{
     }
 
     private void checkCollisipn() {
-        Sound sound = Gdx.audio.newSound(Gdx.files.internal("effect.mp3"));
 
         if(mPlayer.getBoundingRectangle().overlaps(mUfo.getBoundingRectangle())) {
             Gdx.app.log("JampActionGame", "CLEAR");
@@ -261,8 +262,7 @@ public class GameScreen extends ScreenAdapter{
             }
 
             if (mPlayer.getBoundingRectangle().overlaps(enemy.getBoundingRectangle())){
-                sound.play(20.0f);
-                sound.dispose();
+                sound.play(1.0f);
                 mGameState = GAME_STATE_GAMEOVER;
                 return;
             }
@@ -309,4 +309,9 @@ public class GameScreen extends ScreenAdapter{
             }
         }
     }
+
+    public void dispose() {
+        sound.dispose();
+    }
+
 }
